@@ -3,29 +3,20 @@
 {% block body %}
 
 <div class="container-lg">
-  <h3>Active Listings</h3>
-  <div class="row g-3 justify-content-md-center" data-masonry='{"percentPosition": true }'>
 
+  <h3>
+    {% if title %}{{ title }}
+    {% else %}Active Listings{% endif %}
+  </h3>
+  <div class="row g-3">
     {% for item in items %}
-      <div class="col-sm-6 col-md-4 col-lg-3">
-        <a href="{% url 'item_view' item.id %}" class="text-decoration-none">
-          <div class="card pb-2">
-            <div class="embed-resonsive embed-responsive16by9">
-                {% if item.image %}
-                <img src="{{ item.image.url }}" alt="Item" class="card-img-top" width="100%" role="img">
-                {% endif %}
-                <div class="card-body">
-                  <h5 class="card-title">{{ item.name }}</h5>
-                  <p class="fs-6 fw-light">{{ item.description|truncatechars:100 }}</p>
-                  <h5 class="card-text">${{ item.leading_bid }}</h5>
-                </div>
-            </div>
-            
-          </div>
-        </a>
+      <div class="col-md-4 col-lg-3">
+      {% if title == "Your Wins" %}
+      <div class="alert alert-success" role="alert">You Won! at ${{ item.leading_bid }}</div>
+      {% endif %}
+      {% include "auctions/components/item_card.html" %}
       </div>
     {% endfor %}
-
   </div>
 </div>
 
