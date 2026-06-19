@@ -158,8 +158,9 @@ def item_bid(request, id):
 def closed_listing(request):
     if request.method == "GET":
         closed_item = AuctionList.objects.filter(winner=request.user, is_available=False)
-        return render(request, "auctions/closed_listing.html", {
-            "closed_item": closed_item,
+        return render(request, "auctions/index.html", {
+            "items": closed_item,
+            "title": "Your Wins"
         })
 
     else:
