@@ -16,53 +16,15 @@
                 This item is already closed
             </div>
             {% endif %}
-            {% if item.image_url %}
-                <div class="col-md-6 d-flex justify-content-center">
-                    <img src="{{ item.image_url }}" alt="Item Image" class="img-fluid item-view-img">
-                </div>
-            {% elif item.image %}
+            {% if item.image %}
                 <div class="col-md-6 d-flex justify-content-center">
                     <img src="{{ item.image.url }}" alt="Item Image" class="img-fluid item-view-img">
                 </div>
             {% endif %}
     
             <div class="col-md-6">
-                <div>
-                    <div class="fs-3 fw-medium me-3">{{ item.name }}</div>
-                    <!-- Watchlist add or remove -->
-                    <div class="mb-3">
-                        <form action="{% url 'add_or_remove_watchlist' item.id %}" method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="id" value="{{ item.id }}">
-                            
-                            {% if is_in_watchlist %}
-                                <!-- remove from watchlist -->
-                                <abbr title="Remove from Watchlist">
-                                    <button class="btn-no-design px-0 text-secondary" type="submit">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-                                            <path d="M3 2.75C3 1.784 3.784 1 4.75 1h6.5c.966 0 1.75.784 1.75 1.75v11.5a.75.75 0 0 1-1.227.579L8 11.722l-3.773 3.107A.75.75 0 0 1 3 14.25V2.75Z">
-                                            </path>
-                                        </svg>
-                                        <span>Remove from watchlist</span>
-                                    </button>
-                                    
-                                </abbr>
-                            {% else %}
-                                <!-- add to watchlist -->
-                                <abbr title="Add to Watchlist">
-                                    <button class="btn-no-design px-0 text-secondary" type="submit">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20"><path d="M3 2.75C3 1.784 3.784 1 4.75 1h6.5c.966 0 1.75.784 1.75 1.75v11.5a.75.75 0 0 1-1.227.579L8 11.722l-3.773 3.107A.751.751 0 0 1 3 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.91l3.023-2.489a.75.75 0 0 1 .954 0l3.023 2.49V2.75a.25.25 0 0 0-.25-.25Z"></path></svg>                           
-                                        <span>Add to watchlist</span>
-                                    </button>
-                                </abbr>
-                            {% endif %}
-                            
-                        </form>
-                    </div>
-                </div>
                 <div class="fs-4 fw-medium">Description</div>
                 <div class="fs-5 fw-light mb-3">{{ item.description }}</div>
-                <div class="fs-5 fw-medium"><strong>Category: </strong>{{ item.category.name }}</div>
                 <div class="fs-5 fw-medium"><strong>Owner: </strong>{{ item.owner }}</div>
                 <div class="fs-5 fw-medium"><strong>Starting Bid: $</strong>{{ item.price }}</div>
                 <div class="fs-5 fw-medium"><strong>Leading Bid: $</strong>{{ item.leading_bid }}</div>
@@ -96,66 +58,6 @@
                     {% endif %}
                 </div>
             </div>
-        </div>
-
-
-        <hr>
-        <!-- Comment Section -->
-        <div class="my-5">
-            <h3>Comment</h3>
-            <div class="my-3">
-
-                <!-- Add comment section -->
-                <div>
-                    <h5>Comment as <span>{{ user }}</span></h5>
-                    <form action="{% url 'comment' item.id %}" method="post">
-                        {% csrf_token %}
-                        <textarea name="comment" id="comment" class="form-control" placeholder="Leave a comment"></textarea>
-                        <button class="btn btn-secondary my-2" type="submit">Comment</button>
-                    </form>
-                </div>
-
-                <!-- Show all comments -->
-                <div>
-                    {% for comment in comments %}
-                    <div class="card p-3 my-2">
-                        <div class="d-flex justify-content-between my-2">
-                            <div class="d-flex align-item-center">
-                                <h5>{{ comment.user }} </h5>
-                                <div class="fs-6 ms-3 fw-light">
-                                    at {{ comment.created_at }}
-                                </div>
-                            </div>
-
-                            <!-- Comment Delete -->
-                            <!-- Show delete commentnbtn if its user comment of the user owns this item -->
-                            {% if user == comment.user or item.owner == user %}
-                            <div>
-                                <div href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
-                                        <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
-                                    </svg>
-                                </div>
-                                
-                                <form class="dropdown-menu" action="{% url 'comment_delete' item.id %}" method="post">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="comment_id" value="{{ comment.id }}">
-                                    <button class="btn-no-decoration" type="submit">
-                                        <div class="text-center">Delete</div>
-                                    </button>
-                                </form>
-                            </div>
-                            {% endif %}
-                        </div>
-                        <div class="card-text">{{ comment.comment }}</div>
-                    </div>
-                    {% empty %}
-                    <h4>No comments yet. Be the first to share your thoughts!</h4>
-                    {% endfor %}
-                </div>
-            
-            </div>
-
         </div>
 
     </div>

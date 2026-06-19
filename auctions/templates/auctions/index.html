@@ -11,11 +11,7 @@
         <a href="{% url 'item_view' item.id %}" class="text-decoration-none">
           <div class="card pb-2">
             <div class="embed-resonsive embed-responsive16by9">
-              {% if item.image_url %}
-                <img src="{{ item.image_url }}" alt="Item" class="card-img-top" width="100%" role="img">
-              {% elif item.image %} 
-                 <img src="{{ item.image.url }}" alt="Item" class="card-img-top" width="100%" role="img">
-              {% endif %}
+                <img src="{{ item.image.url }}" alt="Item" class="card-img-top" width="100%" role="img">
                 <div class="card-body">
                   <h5 class="card-title">{{ item.name }}</h5>
                   <p class="fs-6 fw-light">{{ item.description|truncatechars:100 }}</p>

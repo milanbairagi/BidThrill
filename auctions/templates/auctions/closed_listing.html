@@ -10,11 +10,7 @@
             <div class="alert alert-success" role="alert">You Won! at ${{ item.leading_bid }}</div>
             <div class="row g-0">
                 <div class="col-md-4 d-flex justify-content-center">
-                    {% if item.image_url %}
-                    <img src="{{ item.image_url }}" alt="Item" class="img-fluid rounded-start">
-                    {% elif item.image %} 
                     <img src="{{ item.image.url }}" class="img-fluid rounded-start" alt="Item">
-                    {% endif %}
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">

@@ -5,7 +5,7 @@ from django import forms
 class CreateListingForm(forms.ModelForm):
     class Meta:
         model = AuctionList
-        fields = ["name", "description", "price", "image", "category"]
+        fields = ["name", "description", "price", "image"]
 
         widgets = {
             "name": forms.TextInput(attrs={
@@ -23,10 +23,7 @@ class CreateListingForm(forms.ModelForm):
             }),
             "image": forms.FileInput(attrs={
                 "class": "form-control my-2",
-            }),
-            "category": forms.Select(attrs={
-                "class": "form-control my-2",
-            }),
+            })
         }
 
         labels = {

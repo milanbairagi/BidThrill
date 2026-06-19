@@ -1,14 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
-from .models import User, AuctionList, Category, Watchlist, Bid, Comment
+from .models import User, AuctionList, Bid
 from .forms import CreateListingForm
-
-from .utils import is_in_watchlist
 
 
 ITEM_VIEW_URL = "auctions/item.html"
@@ -16,21 +14,15 @@ ITEM_VIEW_URL = "auctions/item.html"
 
 def render_item_view(request, user, item, message="", input_warning=""):
     """function to be used by other views to render item view"""
-    in_watchlist = False
     user_bid = None
-    comments_on_item = Comment.objects.filter(item=item)
     if user.is_authenticated:
-        in_watchlist = is_in_watchlist(user, item)
-
         user_bid = Bid.objects.filter(user=user, item=item).first()
 
     return render(request, ITEM_VIEW_URL, {
         "item": item,
-        "is_in_watchlist": in_watchlist,
         "message": message,
         "input_warning": input_warning,
         "user_bid": user_bid,
-        "comments": comments_on_item,
     })
     
 
@@ -118,25 +110,6 @@ def item_view(request, id):
 
 
 @login_required
-def add_or_remove_watchlist(request, id):
-    if request.method == 'POST':
-        user = request.user
-        item = AuctionList.objects.get(id=id)
-        
-        if user.is_authenticated:
-            # Remove item from watchist if its already there
-            if Watchlist.objects.filter(user=user, item=item).exists():
-                watchlist = Watchlist.objects.get(user=user, item=item)
-                watchlist.delete()
-            # Add item to watchist if its not there
-            else:
-                watchlist = Watchlist(user=user, item=item)
-                watchlist.save()
-                
-    return HttpResponseRedirect(reverse("item_view", args=[id]))
-
-
-@login_required
 def item_bid(request, id):
     message = ""
     if request.method == "POST":
@@ -204,63 +177,3 @@ def closed_listing(request):
 
         item.save()
         return HttpResponseRedirect(reverse("index"))
-
-
-@login_required
-def comment(request, id):
-    if request.method == "POST":
-        user = request.user
-        item = AuctionList.objects.get(pk=id)
-        user_comment = request.POST["comment"]
-
-        new_comment = Comment(user=user, item=item, comment=user_comment)
-        new_comment.save()
-
-        return HttpResponseRedirect(reverse("item_view", args=[id]))
-
-
-def comment_delete(request, id):
-    if request.method == "POST":
-        user = request.user
-        comment_id = request.POST["comment_id"]
-        comment = Comment.objects.filter(pk=comment_id).first()
-        item = AuctionList.objects.filter(pk=id).first()
-
-        if not user.is_authenticated or not comment:
-            return HttpResponseRedirect(reverse("item_view", args=[id]))
-
-        if user == comment.user or item.owner == user:
-            comment.delete()
-        
-        return HttpResponseRedirect(reverse("item_view", args=[id]))
-
-
-@login_required
-def watchlist_view(request):
-    if request.method == "GET":
-        if request.user.is_authenticated:
-            watchlists = Watchlist.objects.filter(user=request.user)
-            watchlist_items = [watchlist.item for watchlist in watchlists]
-        
-        return render(request, "auctions/watchlists.html", {
-            "watchlist_items": watchlist_items,
-        })
-
-
-def categories_view(request):
-    if request.method == "GET":
-        categories = Category.objects.all()
-        
-        return render(request, "auctions/categories.html", {
-            "categories": categories,
-        })
-
-
-def category_view(request, category):
-    if request.method == "GET":
-        item_category = Category.objects.filter(name=category).first()
-        items = AuctionList.objects.filter(category=item_category)
-
-        return render(request, "auctions/index.html", {
-            "items": items,
-        })
