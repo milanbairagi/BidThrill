@@ -158,6 +158,9 @@ def item_bid(request, id):
                 
 
 def closed_listing(request):
+    if (request.user.is_authenticated == False):
+        return HttpResponseRedirect(reverse("login"))
+    
     if request.method == "GET":
         closed_item = AuctionList.objects.filter(winner=request.user, is_available=False)
         return render(request, "auctions/closed_listing.html", {
