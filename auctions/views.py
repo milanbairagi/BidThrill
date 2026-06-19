@@ -9,16 +9,13 @@ from .models import User, AuctionList, Bid
 from .forms import CreateListingForm
 
 
-ITEM_VIEW_URL = "auctions/item.html"
-
-
 def render_item_view(request, user, item, message="", input_warning=""):
     """function to be used by other views to render item view"""
     user_bid = None
     if user.is_authenticated:
         user_bid = Bid.objects.filter(user=user, item=item).first()
 
-    return render(request, ITEM_VIEW_URL, {
+    return render(request, "auctions/item.html", {
         "item": item,
         "message": message,
         "input_warning": input_warning,
@@ -157,10 +154,8 @@ def item_bid(request, id):
         return render_item_view(request, user, item, message)
                 
 
+@login_required
 def closed_listing(request):
-    if (request.user.is_authenticated == False):
-        return HttpResponseRedirect(reverse("login"))
-    
     if request.method == "GET":
         closed_item = AuctionList.objects.filter(winner=request.user, is_available=False)
         return render(request, "auctions/closed_listing.html", {
