@@ -21,7 +21,6 @@ class AuctionList(models.Model):
     description = models.TextField(blank=True, null=True)
     price = models.FloatField(default=0.0)
     image = models.ImageField(upload_to="auction_img", blank=True, null=True)
-    image_url = models.URLField(max_length=100, blank=True, null=True)
     is_available = models.BooleanField(default=True, blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True, related_name="category", default=1)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="auctions")
